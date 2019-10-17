@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Trabalho 1 Etapa</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+        <style type="text/css">
+            body{
+                margin:0;
+                padding:0;
+                font:12px aria,verdana,sans-serif
+            }
+            table,tr{border:solid 1px grey;
+            text-align:center;padding:0;
+            border-collapse:collapse}table{width:95%;margin:0 auto}td{border:dotted 1px #000;margin:0;
+            padding:0;
+            min-width:4%}tr:nth-child(even){background-color:#f2f2f2}th{background-color:#000;color:#fff;border:solid 2px #fff}.row{margin:0 auto;
+            width:95%;
+            overflow:auto;
+            padding:2%}.col1{width:20%;
+            float:left;
+            background-color:#f2f2f2;
+            text-align:center;
+            border-radius:10px;
+            padding:1%;
+            box-sizing:border-box}.col2{width:75%;
+            float:left;
+            margin-left:10px;
+            border:solid 2px gray;box-sizing:border-box;
+            border-radius:10px;
+            padding:10px}input[type=number],input[type=text]{width:95%}input[type=submit]{width:40%}textarea{width:95%;
+            resize:none}select{width:95%}button{font:24px sans-serif;
+            width:40px;height:40px;padding:0}ul{text-align:left}h3{text-align:center}form ul{list-style:none}
+        </style>
+        
+     
+    </head>
+    <body>
+        <div class="row">
+            <div class="col1">
+                <h3 id="cadastroprods">Cadastro de Produtos</h3>
+                 <form action="" id="form">
+                    <br>Nome:<input type="text" name="nome" id="nome">
+                    <br>Descrição:<br><textarea rows="5" cols="30" name="desc" draggable="false" id="desc" ></textarea>
+                    <br>Quantidade em Estoque:<input type="number" name="qtd" id="qtd">
+                    <br>Preço:<input type="number" name="preco" step="0.01" id="prec" >
+                    <br>Origem
+                    <ul>
+                        <li><input type="radio" name="ori" value="Nacional" >Nacional</li>
+                        <li><input type="radio" name="ori" value="Importado" >Importado</li>
+                    </ul>
+                    <br>Descontos:
+                    <br><select multiple size="7" name="desco" id="descont" >
+                        <option>10% a vista no Débito</option>
+                        <option>20% a vista no Boleto</option>
+                        <option>Brinde para pagamento a vista</option>
+                        <option>Até 3x sem juros no crédito</option>
+                        <option>Até 4x sem juros no crédito</option>
+                        <option>Até 5x sem juros no crédito</option>
+                        <option>Até 6x sem juros no crédito</option>
+                    </select>
+                    <br>Itens Adicionais:
+                    <ul>
+                        <li><input type="checkbox" id="checkbox" name="itens" value="Grantia Extendida">Garantia Extendida.</li>
+                        <li><input type="checkbox" id="checkbox" name="itens" value="Entrega Rápida">Entrega Rápida.</li>
+                        <li><input type="checkbox" id="checkbox" name="itens" value="Retirada em lojas">Retirada em lojas.</li>
+                    </ul>
+                    <br><input type="submit" value="Cadastrar" id="enviar">
+                </form>
+            </div>
+            <div class="col2">
+                <h3>Produtos Cadastrados</h3>
+                <table><thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Qtd Estoque</th>
+                        <th>Preço</th>
+                        <th>Origem</th>
+                        <th>Descontos</th>
+                        <th>Itens Adicionais</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+
+
+<script>
+	let prods = 0;
+    let editando = 0;
+    let produtos = []; 
+
+    const form = document.getElementById('form');
+    form.reset(); 
+    form.onsubmit = function(e) {
+    e.preventDefault();
+            let nome = this.nome.value;
+            let descr = document.getElementById('desc').value;
+            let qtd = document.getElementById('qtd').value;
+            let prec = document.getElementById('prec').value;
+            let orin = form.ori; 
+            const select = document.getElementById('descont');
+            
+            let descont = Array.from(select.selectedOptions);
+            let desc = "";
+            desc += "<ul>";
+            if(descont.length == 0){
+                desc += "<li>Sem Desconto</li>";
+            } 
+            descont.forEach((item) => {
+                    desc += `<li>${item.value}</li>`;
+            });
+
+            const checklist = Array.from(this.itens);
+            let itensAdi='';
+            itensAdi += "<ul>";
+                checklist.forEach((item) => {
+                    if (item.checked === true)
+                    itensAdi  += `<li>${item.value}</li>`;
+                })
+                itensAdi  += "</ul>";
+
+            let produto = {
+            };
+
+            if (editando === 0) {
+    			prods++;
+
+    			produto = {
+	            	id: prods,  
+	                nome: nome,   
+	                decr: descr, 
+	                qtd: qtd,
+	                prec: prec,
+	                ori:orin.value,
+	                descont: desc,
+	                itensAdi: itensAdi,
+	        	}
+            }
+            else {
+            	idProd = produtos[posicaoEditar].id;
+            	produto = {
+	            	id: idProd,
+	                nome: nome,   
+	                decr: descr, 
+	                qtd: qtd,
+	                prec: prec,
+	                ori:orin.value,
+	                descont: desc,
+	                itensAdi: itensAdi,
+            	}	
+            }
+
+            if (editando === 1 ){
+                produtos[posicaoEditar] = produto;
+                document.getElementById('enviar').value = 'Cadastrar';
+                document.getElementById('cadastroprods').style.color = 'black';
+                document.getElementById('cadastroprods').innerHTML = '<h3> Cadastrar Produtos </h3>';
+                document.getElementById('form').style.border = '';
+            }
+            else {
+                produtos.push(produto);
+            }
+
+            editando = 0;
+            document.getElementById("form").reset();
+            carregaTab(produtos);
+            
+    };
+
+    function carregaTab(produtos){
+        const form = document.getElementById('form');
+        let tableline = document.querySelector("tbody");
+        tableline.innerHTML='';
+
+        for(let i=0; i<produtos.length; i++){
+            let line = document.createElement("tr");
+            let id = document.createElement("td");
+            let nome = document.createElement("td");
+            let desc = document.createElement("td");
+            let qnt = document.createElement("td");
+            let price = document.createElement("td");
+            let origem = document.createElement("td");
+            let descont = document.createElement("td");
+            let itensadc = document.createElement("td");
+            let acoes = document.createElement("td");
+ 	
+            let idtxt = document.createTextNode(produtos[i].id); 
+            let txtname = document.createTextNode(produtos[i].nome);
+            let desctxt = document.createTextNode(produtos[i].decr);
+            let qnttxt = document.createTextNode(produtos[i].qtd);
+            let prectxt = document.createTextNode(produtos[i].prec);
+            let origemtxt = document.createTextNode(produtos[i].ori); 
+            let desconttxt = produtos[i].descont;
+            let itensadictxt = produtos[i].itensAdi; 
+            let buttonAction = `<button onclick="editarProd(${i})">&#9999;</button> <button onclick="exluirProd(${i})">&#128465;</button>`;
+     
+            id.appendChild(idtxt);
+            nome.appendChild(txtname);
+            desc.appendChild(desctxt);
+            qnt.appendChild(qnttxt);
+            price.appendChild(prectxt);
+            origem.appendChild(origemtxt);
+            descont.innerHTML=(desconttxt); 
+            itensadc.innerHTML=(itensadictxt);
+            acoes.innerHTML=(buttonAction); 
+            line.appendChild(id);
+            line.appendChild(nome);
+            line.appendChild(desc);
+            line.appendChild(qnt);
+            line.appendChild(price);
+            line.appendChild(origem);
+            line.appendChild(descont); 
+            line.appendChild(itensadc); 
+            line.appendChild(acoes); 
+            tableline.appendChild(line);
+        }
+    };
+
+    function exluirProd(index){
+        let conf = window.confirm("Deseja Excluir Realmente ?");
+        if(conf === true){
+            produtos.splice(index,1);
+            carregaTab(produtos);
+        }
+    };
+
+    function editarProd(index){
+        this.nome.value = produtos[index].nome;
+        document.getElementById('desc').value = produtos[index].decr;
+        document.getElementById('qtd').value = produtos[index].qtd;
+        document.getElementById('prec').value = produtos[index].prec;
+        document.getElementById('enviar').value = 'Salvar';
+        document.getElementById('enviar').style.color = 'white';
+        document.getElementById('enviar').style.backgroundColor = 'black';
+        document.getElementById('enviar').style.borderColor = 'none';
+        titleedit = document.getElementById('cadastroprods');
+        titleedit.innerHTML = '<h3>Editar Produto</h3>';
+        titleedit.style.color = 'red';
+        document.getElementById('form').style.border = "2px solid red";
+        document.getElementById('form').style.borderRadius = "15px";
+        document.getElementById('form').style.padding = "5px";
+        
+        if(produtos[index].ori==='Nacional')                                             
+            form.ori[0].checked = true;
+        else if (produtos[index].ori==='Importado'){
+            form.ori[1].checked = true;
+        }
+        
+        posicaoEditar = index;
+        editando = 1;
+
+    };
+
+
+</script>
+</html>
+
